@@ -1,18 +1,18 @@
 #include "raylib.h"
+#include "Menu.h"
 
-int main() {
-    // Inicializa la ventana
-    InitWindow(800, 600, "Prueba de Raylib - 8 Puzzle");
+int main(){
+    InitWindow(880, 600, "8-Puzzle");
+    SetTargetFPS(60);
+    Menu menu;
 
-    // Bucle principal del juego
-    while (!WindowShouldClose()) {
+    while(!WindowShouldClose()){
+        int opc = menu.seleccion();
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("¡Raylib esta funcionando correctamente!", 150, 280, 20, DARKGRAY);
+        menu.dibujar();
         EndDrawing();
     }
-
-    // Cierra la ventana
     CloseWindow();
     return 0;
 }
