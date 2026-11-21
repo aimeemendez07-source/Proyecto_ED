@@ -28,6 +28,7 @@ FetchContent_MakeAvailable(raylib)
 add_executable(puzzle8
     src/main.cpp
     src/Menu.cpp
+	src/Tablero.cpp
 )
 
 target_include_directories(puzzle8 PRIVATE include)
