@@ -188,7 +188,6 @@ void ModoInteligente::dibujarSolucion() const {
     ultimoPaso, solucionador.getNodosExpandidos()), 390, 20, DARKGRAY);
 
     dibujarBoton(BTN_ANTERIOR, "Anterior");
-    dibujarBoton(BTN_AUTO, reproduccionAutomatica ? "Pausar" : "Auto");
     dibujarBoton(BTN_SIGUIENTE, "Siguiente");
     dibujarBoton(BTN_NUEVA, "Nueva configuracion");
 }
