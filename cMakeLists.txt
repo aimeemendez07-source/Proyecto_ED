@@ -29,6 +29,9 @@ add_executable(puzzle8
     src/main.cpp
     src/Menu.cpp
 	src/Tablero.cpp
+    src/ModoInteligente.cpp
+    src/Solucionador.cpp
+    src/Puntajes.cpp
 )
 
 target_include_directories(puzzle8 PRIVATE include)

@@ -2,13 +2,15 @@
 #include "Menu.h"
 #include "Tablero.h"
 #include "ModoInteligente.h"
+#include "Puntajes.h"
 
 void DibujarTablero(const Tablero& tablero, int offsetX, int offsetY) {
     int tamCelda = 100;
-    int margen = 5;  //espacio entre las celdas
+    int margen = 2;  //espacio entre las celdas
+    int margenExterior = 6;
     
     //borde exterior
-    Rectangle bordeRect = {(float)(offsetX - margen), (float)(offsetY - margen), (float)(tamCelda * 3 + margen *2), (float)(tamCelda * 3 + margen * 2)};
+    Rectangle bordeRect = {(float)(offsetX - margenExterior), (float)(offsetY - margenExterior), (float)(tamCelda * 3 + margenExterior *2), (float)(tamCelda * 3 + margenExterior * 2)};
     DrawRectangleRounded(bordeRect, 0.1f, 10, DARKPURPLE);
 
     for (int i = 0; i < 3; i++) {
@@ -22,8 +24,6 @@ void DibujarTablero(const Tablero& tablero, int offsetX, int offsetY) {
                 const char* texto = TextFormat("%d", num);
                 int anchoTexto = MeasureText(texto, 40);
                 DrawText(texto, rect.x + (rect.width - anchoTexto) / 2, rect.y + (rect.height - 40) / 2, 40, BLACK);
-            }else{//hueco
-                DrawRectangleRounded(rect, 0.2f, 10, RAYWHITE);
             }
         }
     }
@@ -40,6 +40,9 @@ int main(){
 
     int estadoActual = 0;  //variable para saber la pantalla
     bool juegoTerminado = false; 
+
+    bool pidiendoAlias = false;
+    std::string aliasJugador = "";
 
     while(!WindowShouldClose()){
         BeginDrawing();
@@ -64,7 +67,16 @@ int main(){
         }
         //puntuaciones
         else if(estadoActual == 1){
-            DrawText("PANTALLA DE PUNTUACIONES", 200, 200, 30, BLACK);
+            DrawText("MEJORES PUNTAJES", 300, 50, 30, BLACK);
+            std::vector<RegistroPuntaje> lista = Puntajes::mejoresPuntajes();
+            int y =120;
+
+            for(int i = 0; i < lista.size() && i < 10; i++){
+                std::string texto = std::to_string(i + 1) + ". " + lista[i].alias +  " - " + std::to_string(lista[i].puntaje) + " pts - " + lista[i].fecha;
+                DrawText(texto.c_str(), 200, y, 25, BLACK);
+                y += 35;
+            }
+
             if(Menu::botonVolver()){
                 estadoActual = 0; 
             }
@@ -106,7 +118,38 @@ int main(){
             //mensaje de victoria
             if(juegoTerminado){
                 DrawRectangle(0, 0, 880, 600, Fade(BLACK, 0.6f));
-                DrawText("Felicidades Pequeño Estupido", 250, 300, 30, GOLD);
+
+                if(!pidiendoAlias){
+                    DrawText("Felicidades Pequeño Estupido", 250, 300, 30, GOLD);
+                    DrawText("Presiona ENTER para guardar tu record", 230, 350, 20, WHITE);
+
+                    if(IsKeyPressed(KEY_ENTER)){
+                        pidiendoAlias = true;
+                    }
+                }else{
+                    DrawText("Ingresa tu alias y presiona ENTER", 200, 200, 25, WHITE);
+                    DrawText(aliasJugador.c_str(), 300, 260, 40, GOLD);
+
+                    //captura del alias
+                    int key = GetCharPressed();
+                    while(key > 0){
+                        if((key >=32) && (key <=125) && (aliasJugador.length() < 15)){
+                            aliasJugador += (char)key;
+                        }
+                        key = GetCharPressed();
+                    }
+                    if(IsKeyPressed(KEY_BACKSPACE) && !aliasJugador.empty()){
+                        aliasJugador.pop_back();
+                    }
+                    if(IsKeyPressed(KEY_ENTER) && !aliasJugador.empty()){
+                        Puntajes::guardar(aliasJugador, 100); //100 pts por ganar
+                        pidiendoAlias = false;
+                        juegoTerminado = false; //quitar el mensaje
+                        aliasJugador = "";
+                        estadoActual = 1; //mandar a la pantalla de puntuaciones
+                    }
+                }
+                
             }
             
             DrawRectangle(290, 500, 300, 40, LIGHTGRAY);
