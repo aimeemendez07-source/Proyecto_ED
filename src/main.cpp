@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "Menu.h"
-#include "Tablero.h" 
+#include "Tablero.h"
+#include "ModoInteligente.h"
 
 void DibujarTablero(const Tablero& tablero, int offsetX, int offsetY) {
     int tamCelda = 100;
@@ -34,6 +35,7 @@ int main(){
     
     Menu menu;
     Tablero tablero;
+    ModoInteligente modoInteligente;
     tablero.inicializarAleatorio();
 
     int estadoActual = 0;  //variable para saber la pantalla
@@ -53,6 +55,10 @@ int main(){
                 
                 if(estadoActual == 2){
                     tablero.inicializarAleatorio();
+                }
+
+                if(estadoActual == 3){
+                    modoInteligente.reiniciar();
                 }
             }
         }
@@ -108,7 +114,8 @@ int main(){
         }       
         //modo inteligente
         else if(estadoActual == 3){
-            DrawText("MODO INTELIGENTE - A* (En construcción)", 200, 200, 30, BLACK);
+            modoInteligente.actualizar();   // procesa clics (tableros y botones)
+            modoInteligente.dibujar();      // dibuja la pantalla actual
             if(Menu::botonVolver()){
                 estadoActual = 0; 
             }
